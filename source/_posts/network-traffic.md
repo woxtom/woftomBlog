@@ -71,7 +71,7 @@ prepend-rules:
 3.  **生产力工具的流量**：
     `api.individual.githubcopilot.com` 一直在活跃。vscode中的Copilot 实时把我的代码上下文发回 GitHub 进行推理。
 
-## 0x04 踩坑记录：30GB 日志
+## 0x04 踩坑记录：13GB 日志
 
 在折腾过程中，我发现无知带来的错误。我之前开启了 `log-level: debug` 并且配置了日志写入文件。我发现 13GB的C 盘被日志文件占据
 
