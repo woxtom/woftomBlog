@@ -5,10 +5,10 @@ tags:
   - WSL
   - VS Code
   - 环境配置
-categories:[技术, 折腾日志]
+categories: [技术, 折腾日志]
 ---
 
-作为一名 CS 专业的学生，LaTeX 几乎是刚需。虽然 Overleaf 很好用，但受限于网络和免费版编译时长的限制，我决定在本地（WSL2 + VS Code）搭建一套完整的 LaTeX 编译环境。
+作为一名 CS 专业的学生，LaTex 几乎是刚需。虽然 Overleaf 很好用，但受限于网络和免费版编译时长的限制，我决定在本地（WSL2 + VS Code）搭建一套完整的 LaTeX 编译环境。
 
 但这趟旅程比我想象的要曲折——从 MiKTeX 的坑，到 TeX Live 的 4GB 豪横安装，再到安装卡死的惊魂时刻。本文记录了全过程，希望能帮大家避坑。
 
