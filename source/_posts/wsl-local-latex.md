@@ -1,5 +1,5 @@
 title: WSL + VS Code 本地配置 LaTeX 全记录：从放弃 MiKTeX 到 TeX Live 
-date: 2024-01-28 20:00:00
+date: 2025-12-20 
 tags:
   - LaTeX
   - WSL
