@@ -70,7 +70,18 @@ prepend-rules:
   # === 第二优先级：去广告与隐私保护 ===
   - RULE-SET,reject,REJECT
 ```
-配置生效后，fake-ip-filter 强制系统本地解析交大域名，拿到内网 IP，访问 v.sjtu.edu.cn 简直是 Blazingly Fast，同时后台的 YouTube 依然流畅 4K。Comfortable.
+配置生效后，fake-ip-filter 强制系统本地解析交大域名，拿到内网 IP，可以用命令`nslookup v.sjtu.edu.cn`验证，由于我正在使用TUN模式，clash会拦截所有流量，因此返回
+```
+Server:  UnKnown
+Address:  198.18.0.2
+
+Name:    v.sjtu.edu.cn
+Address:  202.120.35.151
+```
+展示了电脑先问clash，再返回`202.120.35.151`
+诶，好像不对，不应该返回局域网ip，类似`192.168.x.x` 吗？？
+哦，原来交大拥有整个`202.120.x.x`公网ip块，财大气粗的它直接不用使用NAT，而是为内部服务器分配公网ip！
+现在访问 v.sjtu.edu.cn 简直是 Blazingly Fast，同时后台的 YouTube 依然流畅 4K。Comfortable.
 
 ## 0x03 流量分析
 
@@ -101,7 +112,7 @@ prepend-rules:
 
 在清理浏览器缓存时，我意外发现 Chrome 甚至下载了本地神经网络模型（应该是用于 Safe Browsing 和实时字幕）。
 
-这让我意识到，未来的网络不仅仅是传输数据，**计算正在向边缘（Edge）迁移**。浏览器不再只是一个渲染器，它正在变成一个推理引擎。而 Clash 这样的工具，实际上是在应用层（Layer 7）接管了我们的网络边界，成为了我们个人数字生活的“防火墙”和“路由器”。
+这让我意识到，未来的网络不仅仅是传输数据，**计算正在向边缘（Edge）迁移**。浏览器不再只是一个渲染器，它正在变成一个推理引擎。
 
 ## 0x06 总结
 
