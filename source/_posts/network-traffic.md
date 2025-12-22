@@ -1,38 +1,56 @@
-title: 掌控比特流：从 Clash 分流到流量分析的折腾
+title: 掌控比特流：从 Clash 假 IP 陷阱到流量分析的折腾
 date: 2025-12-16 20:00:00
-tags: [Network, Clash, SJTU, Privacy, CS]
+tags: [Network, Clash, SJTU, DNS, Privacy, CS]
 categories: [技术, 折腾日志]
 ---
 
-作为一个计算机专业的学生，最近访问校内资源时遇到个痛点：开着代理（Clash）访问校内网看课程回放时速度很慢（v.sjtu.edu.cn），关了代理又上不去GitHub用不了chatgpt。
+作为一个计算机专业的学生，最近访问校内资源时遇到个痛点：开着代理（Clash）访问校内网看课程回放时速度很慢（v.sjtu.edu.cn），关了代理又上不去 GitHub 用不了 ChatGPT。
 
-难道我还要频繁开关 VPN 吗？难道我要一次使用一个吗？显然不。不仅如此，我还解决了一下广告拦截和隐私保护的问题，顺便预习了一下计算机网络原理。
+起初我以为加个直连规则（Direct）就能搞定，结果却掉进了 DNS 解析的“坑”里。
+
+难道我还要频繁开关 VPN 吗？显然不。不仅如此，我还解决了一下广告拦截和隐私保护的问题，顺便预习了一下计算机网络原理。
 
 <!--more-->
 
 ## 0x01 代理与局域网的冲突
 
-起因很简单，当我在使用 Clash Verge 访问外网查资料时，同时需要访问学校的 `v.sjtu.edu.cn` 观看课程回放。结果浏览器一直转圈。
+起因很简单，当我在使用 Clash Verge 访问外网查资料时，同时需要访问学校的 `v.sjtu.edu.cn` 观看课程回放。结果浏览器一直转圈，或者缓冲极慢。
 
 ### 原理分析
 **Clash 本质上是一个基于规则的流量转发器**。
-当开启“全局模式”或者默认规则配置不当时，Clash 这个“传达室大爷”会把发往 `sjtu.edu.cn` 的请求也打包发给了位于美国的代理服务器。
-美国服务器拿着请求去访问交大内网，绕了地球一圈延迟极高。
+当开启“全局模式”或者默认规则配置不当时，Clash 这个“传达室大爷”会把发往 `sjtu.edu.cn` 的请求也打包发给了位于美国的代理服务器。美国服务器拿着请求去访问交大内网，绕了地球一圈延迟极高。
 
-**解决方案：Split Tunneling（分流）**。我们需要告诉 Clash：“凡是交大的域名，直接走本地网卡（DIRECT）；其他的，再走代理。”
+## 0x02 从 DIRECT 到 Fake-IP 的排错之路
 
-## 0x02 基于规则的路由配置
+### 第一阶段：天真的 DIRECT
+我最初的想法是：**Split Tunneling（分流）**。告诉 Clash：“凡是交大的域名，直接走本地网卡（DIRECT）；其他的，再走代理。”
 
-为了不破坏机场订阅的原有文件（防止自动更新覆盖），我使用了 Clash Verge 的 **Merge（合并配置）** 功能。
+于是我加了规则，但我发现：**依然很慢**，虽然能打开，但远没有平时直连那种秒开的速度。
 
-这里用到一个关键逻辑：**Prepend（前插）**。因为 Clash 的规则匹配是“First Match Wins”（一旦匹配立即停止），所以我必须把我的自定义规则插到最前面。
+### 第二阶段：发现 Fake-IP 的锅
+经过排查，我发现问题出在 Clash 的 **Fake-IP 模式**上。
 
-以下是我的配置方案，包含了 **SJTU 直连** + **去广告** + **隐私保护**：
+1.  **Clash 的工作流**：在 Fake-IP 模式下，Clash 会立即返回一个假 IP（如 198.18.x.x）给浏览器，然后自己在后台解析域名。
+2.  **DNS 甚至比路由更重要**：即使我设置了 `DIRECT`，Clash 依然负责了解析 IP。由于 Clash 为了防污染通常使用远程 DNS（如 8.8.8.8），SJTU 的 CDN 服务器误以为我是公网用户，给我返回了一个**公网 IP**，而不是**校内内网 IP**。
+3.  **结果**：我明明在校内，流量却走了公网出口绕了一圈回来，带宽被限死。
+
+### 最终方案：Fake-IP Filter
+要实现“秒开”，必须让操作系统使用学校 DHCP 下发的本地 DNS 进行解析，拿到内网 IP。
+
+以下是我的最终配置方案（使用 Clash Verge 的 Merge 功能），包含了 **Fake-IP 过滤** + **SJTU 直连** + **去广告**：
 
 ```yaml
 # Profile Merge Configuration
 
-# 1. 引入外部规则集 (Rule Providers)
+# 1. 核心修复：跳过 Fake-IP (让本地 DNS 接管解析，获取内网高速 IP)
+dns:
+  enable: true
+  fake-ip-filter:
+    - "+.sjtu.edu.cn"
+    - "+.lan"
+    - "+.local"
+
+# 2. 引入外部规则集 (Rule Providers)
 # 使用 Loyalsoldier 的规则库，每日自动更新
 rule-providers:
   reject:
@@ -42,17 +60,17 @@ rule-providers:
     path: ./ruleset/reject.yaml
     interval: 86400
 
-# 2. 规则插入 (Prepend Rules)
+# 3. 规则插入 (Prepend Rules)
+# Clash 匹配是 "First Match Wins"，必须插到最前面
 prepend-rules:
-  # === 第一优先级：SJTU 校内网与公网段直连 ===
+  # === 第一优先级：SJTU 校内网直连 ===
   - DOMAIN-SUFFIX,sjtu.edu.cn,DIRECT
   - DOMAIN-KEYWORD,sjtu,DIRECT
 
   # === 第二优先级：去广告与隐私保护 ===
   - RULE-SET,reject,REJECT
 ```
-
-配置生效后，访问 `v.sjtu.edu.cn` 顺畅如拉稀，且后台的 YouTube 视频依然流畅播放。Comfortable.
+配置生效后，fake-ip-filter 强制系统本地解析交大域名，拿到内网 IP，访问 v.sjtu.edu.cn 简直是 Blazingly Fast，同时后台的 YouTube 依然流畅 4K。Comfortable.
 
 ## 0x03 流量分析
 
