@@ -118,7 +118,6 @@ HTML_PAGE = """
     </div>
 
     <script>
-        // --- EDIT YOUR DOMAINS HERE ---
         const FAST_URL = 'https://fast.woftom.online/ping';
         const SILLY_URL = 'https://silly.woftom.online/ping';
         // ------------------------------
@@ -267,7 +266,7 @@ http.server.HTTPServer(('0.0.0.0', PORT), CORSRequestHandler).serve_forever()
 ```
 ## 实验结果：令人窒息的波形
 
-启动服务，打开浏览器，我不禁为眼前的景象倒吸一口凉气。
+启动服务，打开浏览器，访问`fast.woftom.online`,我不禁为眼前的景象倒吸一口凉气。
 
 ![Lag Chart Visualization](/image/lag-chart.png)
 
