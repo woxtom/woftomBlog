@@ -47,13 +47,14 @@ categories:
 
 ```bash
 autossh -M 0 -N \
-  -o "ServerAliveInterval 30" \
-  -o "ServerAliveCountMax 3" \
-  -R 4000:localhost:3001 \      # 正常链路 (对照组)
-  -R 8888:localhost:9001 \      # 入口
-  -L 9001:localhost:9002 \      # 第一跳：回传给 VPS
-  -R 9002:localhost:3001 \      # 第二跳：再次传回给 PC
-  root@dmit
+      -o "ServerAliveInterval 30" \
+      -o "ServerAliveCountMax 3" \
+      -R 4000:localhost:3001 \
+      -R 8888:localhost:9001 \
+      -L 9001:localhost:9002 \
+      -R 9002:localhost:9003 \
+      -L 9003:localhost:9004 \
+      -R 9004:localhost:3001
 ```
 
 ### 2. 可视化面板
