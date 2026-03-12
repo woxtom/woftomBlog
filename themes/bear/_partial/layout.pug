@@ -1,0 +1,50 @@
+- const configLang = Array.isArray(config.language) ? config.language[0] : config.language;
+- const pageLang = page.lang || page.language;
+- const htmlLangSource = pageLang || configLang || 'en';
+- const htmlLang = typeof htmlLangSource === 'string' && htmlLangSource ? htmlLangSource : 'en';
+- const themeDateFormat = localize_config(theme.date_format, 'formats.post_date');
+- const monthFormat = localize_config(theme.month_format, 'formats.month');
+doctype html
+html(lang=htmlLang)
+  head
+    meta(charset="utf-8")
+    - const pageDescriptionSource = page.description || page.excerpt || config.description;
+    if pageDescriptionSource
+      meta(name="description", content=strip_html(pageDescriptionSource))
+    - const keywordsSource = page.keywords || config.keywords || theme.keywords;
+    if keywordsSource
+      - const keywords = Array.isArray(keywordsSource) ? keywordsSource.join(',') : keywordsSource;
+      meta(name="keywords", content=keywords)
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    meta(http-equiv="X-UA-Compatible" content="IE=edge")
+
+    - const siteTitle = theme.title || config.title || config.site_title || 'Hexo';
+    - const pageTitle = page.title ? page.title + ' | ' + siteTitle : siteTitle;
+    title= pageTitle
+    if theme.favicon
+      link(rel="shortcut icon", href=url_for(theme.favicon), type="image/x-icon")
+    != css('styles/site')
+
+    block css
+
+    block head
+
+  //- HTML BODY
+  body
+
+    //- HEADER
+    include ./header.pug
+
+    //- CONTENT
+    block content
+
+    #backToTop
+      .back-arrow.back-arrow-left
+      .back-arrow.back-arrow-right
+
+    //- FOOTER
+    include ./footer.pug
+
+    include ./post_footer.pug
+    include ./google-analytics.pug
+    block js

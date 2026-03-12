@@ -1,0 +1,46 @@
+extends ../_partial/layout
+
+block content
+  .container
+    - const allPosts = page.posts ? page.posts.sort('date', -1).data : [];
+    - const filteredPosts = allPosts.filter(function(post) {
+    -   return !page.year || post.date.year() === page.year;
+    - });
+    - const postsByYear = filteredPosts.reduce(function(result, post) {
+    -   const year = post.date.year();
+    -   if (!result[year]) {
+    -     result[year] = [];
+    -   }
+    -   result[year].push(post);
+    -   return result;
+    - }, {});
+    - const sortedYears = Object.keys(postsByYear).sort(function(a, b) { return b - a; });
+    if sortedYears.length
+      each year in sortedYears
+        .year-wrap
+          .year
+            a.title(href=url_for(config.archive_dir + '/' + year))= year
+        .archives
+          each post in postsByYear[year]
+            .post-archive
+              .post-archive__content
+                .post-archive__month= time(post.date, monthFormat)
+                .post-archive__body
+                  a.post-archive__title(
+                    href=url_for(post.path)
+                    title=post.title || __('common.untitled')
+                  )= post.title || __('common.untitled')
+                  .post-archive__excerpt
+                    - const excerptLength = theme.excerpt_length || 160;
+                    - let archiveExcerpt = strip_html(post.excerpt) || strip_html(post.content || '');
+                    - const originalExcerpt = archiveExcerpt;
+                    - if (excerptLength && archiveExcerpt.length > excerptLength) {
+                    -   archiveExcerpt = archiveExcerpt.substring(0, excerptLength);
+                    - }
+                    .post-archive__excerpt-content(title=originalExcerpt)!= post.excerpt || post.content
+    else
+      .archives
+        .post-archive
+          .post-archive__content
+            .post-archive__body
+              span.post-archive__title= __('archive.empty')

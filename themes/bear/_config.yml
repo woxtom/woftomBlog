@@ -1,0 +1,43 @@
+# Header
+menu:
+  archives: /archives
+rss: /atom.xml
+title: WoftoM
+
+author: WoftoM
+aboutme: Hi~
+fancybox: true
+date_format:
+  zh-CN: 'YYYY年MM月DD日'
+  ja: 'YYYY年MM月DD日'
+  en: 'YYYY-MM-DD'
+
+socials:
+  github: "https://github.com/woxtom"
+
+
+
+# display widgets at the bottom of index pages (pagination == 2)
+index_widgets:
+# - category
+# - tagcloud
+# - archive
+
+#主题方案
+highlight_theme: atom light
+
+# widget behavior
+archive_type: 'monthly'
+show_count: false
+
+disqus_shortname:
+
+# Miscellaneous
+# google_analytics: 'UA-61220413-1'
+gauges_analytics:
+favicon: /images/my-notion-face-transparent.png
+avatar: "/images/my-notion-face-transparent.png"
+twitter:
+google_plus:
+fb_admins:
+fb_app_id:

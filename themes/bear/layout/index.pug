@@ -1,0 +1,33 @@
+extends ../_partial/layout
+
+block content
+
+  .container.home
+    - const posts = (page.posts && page.posts.data) ? page.posts.data : [];
+    if posts.length
+      each post in posts
+        section.article
+          a(href=url_for(post.path)).title= post.title || __('common.untitled')
+          - const excerptLength = theme.excerpt_length || 160;
+          - let excerpt = post.excerpt || post.content || '';
+          - if (excerpt.length > excerptLength) {
+          -   excerpt = excerpt.substring(0, excerptLength) + '...';
+          - }
+          div.content.excerpt!= post.excerpt || post.content
+          - const galleryPhotos = Array.isArray(post.photos) ? post.photos : []
+          - const galleryId = post._id ? 'gallery_' + post._id : null
+          - const galleryKey = String(post._id || post.slug || post.path || post.title || Date.now())
+          - const galleryPreviewLimit = 2
+          - const galleryShowAll = false
+          include ../_partial/gallery.pug
+          if post.tags
+            .tags!= list_tags(post.tags, { show_count: false, class: 'tag', style: false, separator: '' })
+          div.article-footer
+            - const excerptLinkText = __('common.read_more')
+            a.excerpt-link(href=url_for(post.path))= excerptLinkText
+            .article-footer__right
+              span.date= __('post.byline', date(post.date, themeDateFormat))
+    else
+      section.article
+        .content
+          p= __('index.empty')

@@ -1,0 +1,21 @@
+if Array.isArray(galleryPhotos) && galleryPhotos.length
+  - const rawGalleryRel = typeof galleryId === 'string' && galleryId ? galleryId : 'gallery_' + (galleryKey || '')
+  - const galleryRel = rawGalleryRel.replace(/[^A-Za-z0-9_-]/g, '_')
+  - const galleryShowAllPhotos = typeof galleryShowAll === 'boolean' ? galleryShowAll : false
+  - const previewLimit = typeof galleryPreviewLimit === 'number' && galleryPreviewLimit > 0 ? galleryPreviewLimit : 1
+  - const photosToRender = galleryShowAllPhotos ? galleryPhotos : galleryPhotos.slice(0, previewLimit)
+  - const remainingCount = Math.max(galleryPhotos.length - photosToRender.length, 0)
+  if photosToRender.length
+    .article-gallery
+      .article-gallery-photos
+        each photo, photoIndex in photosToRender
+          - const photoUrl = url_for(photo)
+          - const isPreviewPlaceholder = !galleryShowAllPhotos && previewLimit > 1 && photoIndex === 1
+          - const previewStyle = 'background-image: url("' + photoUrl + '")'
+          a(class='article-gallery-img fancybox' + (isPreviewPlaceholder ? ' article-gallery-img--preview' : ''), href=photoUrl, rel=galleryRel)
+            img(src=photoUrl, itemprop='image')
+            if isPreviewPlaceholder
+              span.article-gallery-img__sharp(style=previewStyle)
+              if remainingCount > 0
+                - const remainingText = __('gallery.more_photos', remainingCount)
+                span.article-gallery-more= remainingText

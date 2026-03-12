@@ -1,0 +1,24 @@
+.about-me-mask
+  .about-me-wrap
+    .about-me__header
+      .avatar
+        img(src=url_for(theme.avatar))
+    ul.socials
+      each item, name in theme.socials
+        li.social-item
+          span.label
+            img(src=url_for('images/socials/' + name + '.svg'), alt=item)
+          - const rawValue = typeof item === 'string' ? item : '';
+          - const value = rawValue.trim();
+          - const lowerValue = value.toLowerCase();
+          - const isMailto = lowerValue.indexOf('mailto:') === 0;
+          - const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          - const isEmail = !isMailto && emailPattern.test(value);
+          - const normalized = isEmail ? 'mailto:' + value : value;
+          - const isExternal = /^https?:\/\//.test(normalized) || /^\/\//.test(normalized) || isMailto || isEmail;
+          - const href = normalized ? url_for(normalized) : '';
+          - const targetAttr = isExternal && !isMailto ? '_blank' : null;
+          - if (href)
+            a(href=href, target=targetAttr, rel=isExternal && !isMailto ? 'noopener' : null, title=value)= rawValue || value
+          - else
+            span.icon= rawValue || value

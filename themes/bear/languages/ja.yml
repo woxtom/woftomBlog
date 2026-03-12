@@ -1,0 +1,21 @@
+common:
+  untitled: 無題
+  read_more: 続きを読む
+post:
+  byline: 公開日 %s
+  previous: 前の記事：
+  next: 次の記事：
+index:
+  empty: 投稿がまだありません。
+archive:
+  empty: アーカイブはありません。
+tag:
+  empty: このタグの投稿はありません。
+formats:
+  post_date: YYYY年MM月DD日
+  month: MM月
+menu:
+  home: ホーム
+  archives: アーカイブ
+gallery:
+  more_photos: 残り%d枚の写真

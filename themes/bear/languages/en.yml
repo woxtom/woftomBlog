@@ -1,0 +1,21 @@
+common:
+  untitled: Untitled
+  read_more: Read more
+post:
+  byline: Posted on %s
+  previous: "Previous: "
+  next: "Next: "
+index:
+  empty: No posts yet.
+archive:
+  empty: No archived posts.
+tag:
+  empty: No posts for this tag.
+formats:
+  post_date: YYYY-MM-DD
+  month: MMM
+menu:
+  home: Home
+  archives: Archives
+gallery:
+  more_photos: "%d more photos"

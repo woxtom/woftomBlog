@@ -1,0 +1,21 @@
+common:
+  untitled: 未命名
+  read_more: 閱讀更多
+post:
+  byline: 發表於 %s
+  previous: 上一篇：
+  next: 下一篇：
+index:
+  empty: 暫無文章。
+archive:
+  empty: 暫無歸檔內容。
+tag:
+  empty: 暫無相關內容。
+formats:
+  post_date: YYYY年MM月DD日
+  month: MM月
+menu:
+  home: 首頁
+  archives: 歸檔
+gallery:
+  more_photos: 還有%d張圖片

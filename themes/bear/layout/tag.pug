@@ -1,0 +1,26 @@
+extends ../_partial/layout
+
+block content
+  .container
+    - const tagPosts = page.posts ? page.posts.sort('date', -1).data : [];
+    if tagPosts.length
+      .archives
+        each post in tagPosts
+          .post-archive
+            .post-archive__content
+              .post-archive__month= time(post.date, monthFormat)
+              .post-archive__body
+                a.post-archive__title(href=url_for(post.path))= post.title || __('common.untitled')
+                .post-archive__excerpt
+                  - const excerptLength = theme.excerpt_length || 160;
+                  - let tagExcerpt = post.excerpt || strip_html(post.content || '');
+                  - if (tagExcerpt.length > excerptLength) {
+                  -   tagExcerpt = tagExcerpt.substring(0, excerptLength) + '...';
+                  - }
+                  .post-archive__excerpt-content!= tagExcerpt
+    else
+      .archives
+        .post-archive
+          .post-archive__content
+            .post-archive__body
+              span.post-archive__title= __('tag.empty')
